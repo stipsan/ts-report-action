@@ -20,7 +20,7 @@ GitHub Action to report TypeScript errors in Pull Requests
 
 - name: TypeScript report
   if: steps.changed-typescript-files.outputs.any_changed == 'true'
-  uses: fersilva16/ts-report-action@1.1.0
+  uses: stipsan/ts-report-action@1.1.0
   with:
     files: ${{ steps.changed-typescript-files.outputs.all_changed_files }}
 ```
@@ -29,7 +29,7 @@ GitHub Action to report TypeScript errors in Pull Requests
 
 ```yml
 - name: TypeScript report
-  uses: fersilva16/ts-report-action@1.1.0
+  uses: stipsan/ts-report-action@1.1.0
   with:
     project: path/to/tsconfig.json
 ```

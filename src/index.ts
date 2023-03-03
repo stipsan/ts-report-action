@@ -1,6 +1,6 @@
 import { error, getInput, setFailed } from '@actions/core';
 import ts from 'typescript';
-import path from 'path';
+import path from 'node:path';
 
 const check = async (projectPath: string, files?: string[]) => {
   const json = ts.readConfigFile(projectPath, ts.sys.readFile);
@@ -40,6 +40,9 @@ const check = async (projectPath: string, files?: string[]) => {
     path.basename(projectPath)
   );
 
+  // eslint-disable-next-line no-console
+  console.info('config', config);
+
   const program = ts.createProgram({
     rootNames: config.fileNames,
     options: config.options,
@@ -56,6 +59,8 @@ const check = async (projectPath: string, files?: string[]) => {
 
     return config.fileNames.includes(diagnostic.file.fileName);
   });
+
+  let shouldFail = false;
 
   for (const diagnostic of filteredDiagnostics) {
     const getDiagnosticPosition = () => {
@@ -89,6 +94,12 @@ const check = async (projectPath: string, files?: string[]) => {
       startLine,
       startColumn,
     });
+
+    shouldFail = true;
+  }
+
+  if (shouldFail) {
+    setFailed('TypeScript compilation failed');
   }
 };
 
@@ -96,6 +107,8 @@ const check = async (projectPath: string, files?: string[]) => {
   try {
     const project = getInput('project') || 'tsconfig.json';
     const projectPath = path.resolve(process.cwd(), project);
+    // eslint-disable-next-line no-console
+    console.info({ projectPath });
 
     const files = getInput('files');
 
